@@ -40,7 +40,7 @@ from ecommerce.serializers import RegisterSerializer
 
 
 
-class AuthSignUp(generics.ListCreateAPIView):
+class AuthSignUp(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
@@ -50,9 +50,6 @@ class AuthSignUp(generics.ListCreateAPIView):
         serializer.save()
         return Response(serializer.data)
 
-    def delete(self,request):
-        User.objects.all().delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

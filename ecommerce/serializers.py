@@ -12,7 +12,10 @@ class RegisterSerializer (serializers.ModelSerializer):
         model = User
         fields = ['username','email','password']
 
-
+        # def to_representation(self, instance):
+        #     reprs = super(RegisterSerializer,self).to_representation(instance)
+        #     reprs['password'] = '********'
+        #     return reprs
 
 
 
