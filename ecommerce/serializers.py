@@ -1,4 +1,4 @@
-
+from django.contrib.auth import authenticate
 from rest_framework import serializers
 
 from ecommerce.models import Cart, CartItem, Order, OrderItem, Products, Category
@@ -11,11 +11,25 @@ class RegisterSerializer (serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username','email','password']
+        extra_kwargs = {'email': {'required': True , 'allow_blank' : False}}
 
     def to_representation(self, instance):
         reprs = super().to_representation(instance)
         reprs['password'] = '********'
         return reprs
+
+
+
+
+class LoginSerializer (serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username','password']
+
+
+
+
+
 
 
 

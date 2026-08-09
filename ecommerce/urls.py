@@ -19,5 +19,7 @@ from ecommerce.serializers import RegisterSerializer
 
 urlpatterns = [
     path('auth/signup/', views.AuthSignUp.as_view(), name='register'),
+    path('auth/login/', views.AuthLogin.as_view(), name='login'),
+    # path('auth/test/', views.AuthTest.as_view(), name='Test'),
 
 ]

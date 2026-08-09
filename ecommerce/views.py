@@ -1,11 +1,16 @@
+from django.contrib.auth import login, user_logged_in
 from django.contrib.auth.models import AbstractUser, User
-from rest_framework import viewsets, status, generics
+from django.template.context_processors import request
+from rest_framework import viewsets, status, generics, permissions
 from rest_framework.decorators import api_view
+from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ecommerce.models import Category, Products
-from ecommerce.serializers import RegisterSerializer
+from ecommerce.serializers import RegisterSerializer, LoginSerializer
+
 
 #
 #
@@ -44,11 +49,31 @@ class AuthSignUp(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
 
-    def signup(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
-        serializer.save()
-        return Response(serializer.data)
+
+class AuthLogin(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = LoginSerializer
+    permission_classes = [IsAuthenticated]
+
+
+
+
+# class AuthTest(generics.ListAPIView):
+
+#     permission_classes = [IsAuthenticated]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
