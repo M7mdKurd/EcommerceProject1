@@ -13,18 +13,19 @@ class RegisterSerializer (serializers.ModelSerializer):
         fields = ['username','email','password']
         extra_kwargs = {'email': {'required': True , 'allow_blank' : False}}
 
+
     def to_representation(self, instance):
         reprs = super().to_representation(instance)
         reprs['password'] = '********'
         return reprs
 
 
-
-
 class LoginSerializer (serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username','password']
+
+
 
 
 
