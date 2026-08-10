@@ -42,7 +42,7 @@ class AuthViewSet(ViewSet):
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
         try:
-            user = User.objects.get(username=username, password=password)
+            user = User.objects.get(username=username)
             if not user.check_password(password):
                 raise ValidationError('Incorrect username or password.')
 
