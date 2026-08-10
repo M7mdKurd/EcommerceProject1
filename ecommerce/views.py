@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser, User
 from django.core.serializers import serialize
 from django.template.context_processors import request
 from rest_framework import viewsets, status, generics, permissions
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404, GenericAPIView
@@ -57,9 +59,10 @@ class AuthViewSet(ViewSet):
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
         email = serializer.validated_data['email']
-        User.objects.create_user(username=username, password=password , email=email)
-        return Response({'message': f'Hello {username}.'},status=status.HTTP_201_CREATED)
+        Token.objects.get_or_create(username=username, password=password , email=email)
+        # Token.objects.get_or_create(username=username)
 
+        return Response({'message': f'Hello {username}.'},status=status.HTTP_201_CREATED)
 
 
 
