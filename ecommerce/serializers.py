@@ -20,15 +20,15 @@ class RegisterSerializer (serializers.ModelSerializer):
         return reprs
 
 
-class LoginSerializer (serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username','password']
+class LoginSerializer (serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
 
 
 
-
-
+class TokenSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
 
 
 

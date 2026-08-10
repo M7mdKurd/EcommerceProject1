@@ -1,11 +1,8 @@
-from django.urls import path, include
-from rest_framework import views
-from rest_framework.routers import DefaultRouter
-from ecommerce import views
-from .views import AuthViewSet, CustomAuthToken
-from ecommerce.serializers import RegisterSerializer
 
-# from ecommerce.views import CategoryViewSet, ProductViewSet, RegisterView
+from rest_framework.routers import DefaultRouter
+
+from ecommerce.views import AuthViewSet
+
 
 router = DefaultRouter()
 

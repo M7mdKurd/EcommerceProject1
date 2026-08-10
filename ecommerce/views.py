@@ -1,11 +1,13 @@
-from django.contrib.auth import login, user_logged_in
+import email
+import token
+
+from django.contrib.auth import login, user_logged_in, authenticate
 from django.contrib.auth.models import AbstractUser, User
 from django.core.serializers import serialize
 from django.template.context_processors import request
 from rest_framework import viewsets, status, generics, permissions
 from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view, action, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -14,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
 from ecommerce.models import Category, Products
-from ecommerce.serializers import RegisterSerializer, LoginSerializer
+from ecommerce.serializers import RegisterSerializer, LoginSerializer, TokenSerializer
 
 
 #
@@ -43,13 +45,16 @@ class AuthViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
-        try:
-            user = User.objects.get(username=username)
-            if not user.check_password(password):
-                raise ValidationError('Incorrect username or password.')
 
+        try:
+            username = User.objects.get(username=username)
+            if username.check_password(password):
+                token, created = Token.objects.get_or_create(user=username)
+                return Response({'token': token.key, 'username': username.username})
+            return Response({'message': 'Username / Password is Invalid'}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 
     @action(detail=False, methods=['post'])
@@ -59,28 +64,13 @@ class AuthViewSet(ViewSet):
         username = serializer.validated_data['username']
         password = serializer.validated_data['password']
         email = serializer.validated_data['email']
-        Token.objects.get_or_create(username=username, password=password , email=email)
-        # Token.objects.get_or_create(username=username)
+        User.objects.create_user(username=username, password=password , email=email)
 
         return Response({'message': f'Hello {username}.'},status=status.HTTP_201_CREATED)
 
 
 
+    @action(detail=False, methods=['get'] , permission_classes=[IsAuthenticated])
+    def test(self, request):
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return Response({'message': 'Hello world!' }, status=status.HTTP_200_OK)

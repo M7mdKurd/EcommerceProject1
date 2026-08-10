@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth import login
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -41,8 +42,4 @@ class OrderItem(models.Model):
     product_id = models.OneToOneField(Products, on_delete=models.CASCADE)
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
 
