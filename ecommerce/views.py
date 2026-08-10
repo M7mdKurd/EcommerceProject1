@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
 from ecommerce.models import Category, Products
-from ecommerce.serializers import RegisterSerializer, LoginSerializer, TokenSerializer
+from ecommerce.serializers import RegisterSerializer, LoginSerializer
 
 
 #
@@ -70,7 +70,8 @@ class AuthViewSet(ViewSet):
 
 
 
-    @action(detail=False, methods=['get'] , permission_classes=[IsAuthenticated])
-    def test(self, request):
+    @action(detail=False, methods=['get'] , permission_classes = [IsAuthenticated])
+    def test(self, request ):
+
 
         return Response({'message': 'Hello world!' }, status=status.HTTP_200_OK)

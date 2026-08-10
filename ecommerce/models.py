@@ -22,7 +22,7 @@ class Products(models.Model):
 
 
 class Cart(models.Model):
-    # user_id = models.OneToOneField(on_delete=models.CASCADE)
+    user_id = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class CartItem(models.Model):
@@ -33,7 +33,7 @@ class CartItem(models.Model):
 
 
 class Order(models.Model):
-    # user_id = models.ForeignKey(on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
