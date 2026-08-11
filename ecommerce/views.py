@@ -1,5 +1,3 @@
-
-
 from django.contrib.auth.models import AbstractUser, User
 from rest_framework import viewsets, status, generics
 from rest_framework.authtoken.models import Token
@@ -8,22 +6,9 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from ecommerce.models import Category, Products
-from ecommerce.serializers import RegisterSerializer, LoginSerializer, CategorySerializer, ProductSerializer
-
-
-#
-#
-# class CategoryViewSet(viewsets.ModelViewSet):
-#     queryset = Category.objects.all()
-#     serializer_class = CategorySerializer
-#
-# class ProductViewSet(viewsets.ModelViewSet):
-#     queryset = Products.objects.all()
-#     serializer_class = ProductSerializer
-#
-#
-
+from ecommerce.models import Category, Products, Cart, CartItem
+from ecommerce.serializers import RegisterSerializer, LoginSerializer, CategorySerializer, ProductSerializer, \
+    CartSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
 
 
 
@@ -67,6 +52,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+    def delete(self, request, pk=None):
+        Category.objects.get(pk=pk).delete()
+        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
@@ -75,4 +64,42 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 
+class CartViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
 
+    def delete(self, request, pk=None):
+        Cart.objects.get(pk=pk).delete()
+        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
+
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+    def delete(self, request, pk=None):
+        CartItem.objects.get(pk=pk).delete()
+        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
+
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = Cart.objects.all()
+    serializer_class = OrderSerializer
+
+    def delete(self, request, pk=None):
+        Cart.objects.get(pk=pk).delete()
+        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderItemViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = CartItem.objects.all()
+    serializer_class = OrderItemSerializer
+
+    def delete(self, request, pk=None):
+        CartItem.objects.get(pk=pk).delete()
+        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)

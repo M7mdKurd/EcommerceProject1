@@ -33,32 +33,59 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer
-
+    category_id = serializers.IntegerField()
+    stock = serializers.IntegerField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    description = serializers.CharField(max_length=255)
+    name = serializers.CharField(max_length=255)
     class Meta:
         model = Products
-        fields = ['id','name','price','description','stock','category']
+        fields = ['name','price','description','stock','category_id']
+
+    def validate(self, attrs):
+        if attrs['stock'] < 1:
+            raise serializers.ValidationError("Stock cannot be less than 1")
+        try:
+            Category.objects.get(id=attrs['category_id'])
+        except Category.DoesNotExist:
+            raise serializers.ValidationError("Invalid Category")
+        if attrs['price'] < 0:
+            raise serializers.ValidationError("Price cannot be less than 0")
+
+        return attrs
+
+
 
 
 class CartSerializer(serializers.ModelSerializer):
-    user = UserSerializer
+    user_id = serializers.IntegerField()
 
     class Meta:
         model = Cart
         fields = ['id','user_id','created_at']
-        #There is user_id_id also?
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    cart = CartSerializer
-    product = ProductSerializer
+    cart_id = serializers.IntegerField()
+    product_id = serializers.IntegerField()
+    quantity = serializers.IntegerField()
+
+
     class Meta:
         model = CartItem
-        fields = ['id','cart','quantity','out_of_stock','product']
+        fields = ['id','cart_id','quantity','product_id']
+
+class OrderSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+
+    class Meta:
+        model = Order
+        fields = ['id','user_id','created_at']
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer
+    order_id = serializers.IntegerField()
+    product_id = serializers.IntegerField()
 
     class Meta:
         model = OrderItem
@@ -66,13 +93,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    user = UserSerializer
-    items = OrderItemSerializer(many=True)
-
-    class Meta:
-        model = Order
-        fields = ['id','user_id','created_at','items']
 
 
 
