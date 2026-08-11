@@ -1,22 +1,15 @@
-import email
-import token
 
-from django.contrib.auth import login, user_logged_in, authenticate
+
 from django.contrib.auth.models import AbstractUser, User
-from django.core.serializers import serialize
-from django.template.context_processors import request
-from rest_framework import viewsets, status, generics, permissions
+from rest_framework import viewsets, status, generics
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, action, permission_classes
-from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404, GenericAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, action
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
 from ecommerce.models import Category, Products
-from ecommerce.serializers import RegisterSerializer, LoginSerializer
+from ecommerce.serializers import RegisterSerializer, LoginSerializer, CategorySerializer, ProductSerializer
 
 
 #
@@ -30,16 +23,13 @@ from ecommerce.serializers import RegisterSerializer, LoginSerializer
 #     serializer_class = ProductSerializer
 #
 #
-# class RegisterView(APIView):
-#     queryset = User.objects.all()
-#     serializer_class = RegisterSerializer
 
 
 
 
 class AuthViewSet(ViewSet):
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'] , permission_classes=[AllowAny])
     def login(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -70,8 +60,19 @@ class AuthViewSet(ViewSet):
 
 
 
-    @action(detail=False, methods=['get'] , permission_classes = [IsAuthenticated])
-    def test(self, request ):
 
 
-        return Response({'message': 'Hello world!' }, status=status.HTTP_200_OK)
+class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    queryset = Products.objects.all()
+    serializer_class = ProductSerializer
+
+
+
+

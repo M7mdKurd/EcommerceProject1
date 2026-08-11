@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=40,null= True)
+    name = models.CharField(max_length=40)
 
 
 class Products(models.Model):
@@ -18,28 +18,28 @@ class Products(models.Model):
     price = models.DecimalField
     description = models.TextField
     stock = models.IntegerField(default=0)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class Cart(models.Model):
-    user_id = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(User ,on_delete=models.CASCADE, null=True , blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class CartItem(models.Model):
-    cart_id = models.ForeignKey(Cart , on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart , on_delete=models.CASCADE)
     quantity = models.IntegerField()
     out_of_stock = models.BooleanField(default=False)
-    product_id = models.OneToOneField(Products, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
 
 
 class Order(models.Model):
-    user_id = models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User ,on_delete=models.CASCADE, null=True , blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class OrderItem(models.Model):
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product_id = models.OneToOneField(Products, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
 
 
 
