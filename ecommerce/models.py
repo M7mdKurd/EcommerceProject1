@@ -16,7 +16,7 @@ class Products(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10)
     description = models.TextField()
     stock = models.IntegerField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
 
 
 class Cart(models.Model):
@@ -38,6 +38,11 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     quantity = CartItem.quantity
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
+
+
+
+
+
 
 
 
