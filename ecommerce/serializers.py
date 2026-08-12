@@ -122,17 +122,22 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     order_id = serializers.IntegerField()
+    quantity = serializers.IntegerField()
     product_id = serializers.IntegerField()
 
     class Meta:
         model = OrderItem
-        fields = ['id','order_id','product']
+        fields = ['id','order_id','quantity','product_id']
+
 
     def validate(self, attrs):
         try:
             Order.objects.get(id=attrs['order_id'])
         except Order.DoesNotExist:
             raise serializers.ValidationError("Invalid Order")
+
+        if attrs['quantity'] > Products.objects.get(id=attrs['product_id']).stock:
+            raise serializers.ValidationError("Out of Stock")
 
         return attrs
 
