@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from ecommerce.models import Category, Products, Cart, CartItem
+from ecommerce.models import Category, Products, Cart, CartItem, Order, OrderItem
 from ecommerce.serializers import RegisterSerializer, LoginSerializer, CategorySerializer, ProductSerializer, \
     CartSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
 
@@ -72,12 +72,12 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Cart.objects.all()
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
 
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
-    queryset = CartItem.objects.all()
+    queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer

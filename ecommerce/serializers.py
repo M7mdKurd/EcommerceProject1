@@ -34,14 +34,13 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField()
-    stock = serializers.IntegerField()
+    stock = serializers.IntegerField(default=0)
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     description = serializers.CharField(max_length=255)
-    name = serializers.CharField(max_length=255)
 
     class Meta:
         model = Products
-        fields = ['name','price','description','stock','category_id']
+        fields = ['id','name','price','description','stock','category_id']
 
     def validate(self, attrs):
         if attrs['stock'] < 1:
@@ -65,6 +64,15 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id','user_id','created_at']
 
+    def validate(self, attrs):
+        try:
+            User.objects.get(id=attrs['user_id'])
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid User")
+        return attrs
+
+
+
 
 class CartItemSerializer(serializers.ModelSerializer):
     cart_id = serializers.IntegerField()
@@ -76,12 +84,40 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = ['id','cart_id','quantity','product_id']
 
+    def validate(self, attrs):
+        if attrs['quantity'] > Products.objects.get(id=attrs['product_id']).stock:
+            raise serializers.ValidationError("Out of Stock")
+
+        #PROBLEM HERE
+        try:
+            Products.objects.get(id=attrs['product_id'])
+        except Products.DoesNotExist:
+            raise serializers.ValidationError("Invalid Product")
+
+        try:
+            Cart.objects.get(id=attrs['cart_id'])
+        except Cart.DoesNotExist:
+            raise serializers.ValidationError("Invalid Cart")
+
+        return attrs
+
+
+
+
 class OrderSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
 
     class Meta:
         model = Order
         fields = ['id','user_id','created_at']
+
+    def validate(self, attrs):
+        try:
+            User.objects.get(id=attrs['user_id'])
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Invalid User")
+        return attrs
+
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -92,13 +128,11 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ['id','order_id','product']
 
+    def validate(self, attrs):
+        try:
+            Order.objects.get(id=attrs['order_id'])
+        except Order.DoesNotExist:
+            raise serializers.ValidationError("Invalid Order")
 
-
-
-
-
-
-
-
-
+        return attrs
 

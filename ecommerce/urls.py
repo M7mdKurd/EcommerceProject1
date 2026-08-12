@@ -11,8 +11,8 @@ router.register('category', CategoryViewSet, basename='category_list')
 router.register('product', ProductViewSet, basename='products')
 router.register('cart', CartViewSet, basename='cart')
 router.register('cart-item', CartItemViewSet, basename='cart item')
-router.register('Order', OrderViewSet, basename='order')
-router.register('Order-item', OrderItemViewSet, basename='order item')
+router.register('order', OrderViewSet, basename='order')
+router.register('order-item', OrderItemViewSet, basename='order item')
 
 
 urlpatterns = router.urls
