@@ -38,6 +38,7 @@ class ProductSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(max_digits=10, decimal_places=2)
     description = serializers.CharField(max_length=255)
     name = serializers.CharField(max_length=255)
+
     class Meta:
         model = Products
         fields = ['name','price','description','stock','category_id']

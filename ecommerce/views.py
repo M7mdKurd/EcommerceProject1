@@ -32,7 +32,7 @@ class AuthViewSet(ViewSet):
 
 
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'] , permission_classes=[AllowAny])
     def signup(self, request):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -48,58 +48,36 @@ class AuthViewSet(ViewSet):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-    def delete(self, request, pk=None):
-        Category.objects.get(pk=pk).delete()
-        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
 
 
 
 class CartViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
 
-    def delete(self, request, pk=None):
-        Cart.objects.get(pk=pk).delete()
-        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
 
 
 class CartItemViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-
-    def delete(self, request, pk=None):
-        CartItem.objects.get(pk=pk).delete()
-        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
 
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
     queryset = Cart.objects.all()
     serializer_class = OrderSerializer
 
-    def delete(self, request, pk=None):
-        Cart.objects.get(pk=pk).delete()
-        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
+
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
     queryset = CartItem.objects.all()
     serializer_class = OrderItemSerializer
-
-    def delete(self, request, pk=None):
-        CartItem.objects.get(pk=pk).delete()
-        return Response({'message': 'Deleted'}  ,status=status.HTTP_204_NO_CONTENT)
