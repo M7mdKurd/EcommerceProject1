@@ -24,20 +24,25 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart , on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart , on_delete=models.CASCADE, related_name='cart_items')
     quantity = models.IntegerField()
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
 
+    @property
+    def item_total(self):
+        return self.quantity * self.product.price
+
+
 
 class Order(models.Model):
-    user = models.OneToOneField(User ,on_delete=models.CASCADE)
+    user = models.OneToOneField(User ,on_delete=models.CASCADE, null=True , blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    quantity = CartItem.quantity
-    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
+    quantity = models.IntegerField()
+    product = models.ForeignKey(Products, on_delete=models.PROTECT)
 
 
 

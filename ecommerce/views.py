@@ -67,9 +67,12 @@ class CartViewSet(viewsets.ModelViewSet):
 
 
 
+
+
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
+
 
 
 
