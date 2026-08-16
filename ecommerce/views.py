@@ -1,8 +1,8 @@
-from django.contrib.auth.models import AbstractUser, User
-from rest_framework import viewsets, status, generics
+from django.contrib.auth.models import User
+from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, action
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
@@ -61,17 +61,34 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 
-class CartViewSet(viewsets.ModelViewSet):
-    queryset = Cart.objects.all()
+class CartViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     serializer_class = CartSerializer
+    queryset = Cart.objects.all()
+
+    def get_items(self, request, *args, **kwargs):
+        serializer = CartItemSerializer(many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['post'], url_path='add-item')
+    def add_item(self, request):
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        serializer = CartItemSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product_id=serializer.validated_data['product_id'],
+            defaults={'quantity': serializer.validated_data.get('quantity', 1)}
+        )
 
 
+        return Response(CartItemSerializer(item).data, status=status.HTTP_201_CREATED)
 
 
+    @action(detail=True, methods=['delete'], url_path='delete-item')
+    def delete_item(self, request, pk=None):
+        Cart.objects.filter(id=pk).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class CartItemViewSet(viewsets.ModelViewSet):
-    queryset = CartItem.objects.all()
-    serializer_class = CartItemSerializer
 
 
 

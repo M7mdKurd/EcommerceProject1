@@ -40,7 +40,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Products
-        fields = ['id','name','price','description','stock','category_id']
+        fields = ['id','name','price','description','stock','category_id','count_order']
 
     def validate(self, attrs):
         if attrs['stock'] < 1:
@@ -56,7 +56,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    cart_id = serializers.IntegerField()
     product_id = serializers.IntegerField()
     quantity = serializers.IntegerField()
     product_name = serializers.CharField(source='product.name', read_only=True)
@@ -67,7 +66,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['id','cart_id','quantity','product_id','product_name','price','product_description']
+        fields = ['id','quantity','product_id','product_name','price','product_description']
 
     def validate(self, attrs):
         if attrs['quantity'] > Products.objects.get(id=attrs['product_id']).stock:
@@ -79,17 +78,13 @@ class CartItemSerializer(serializers.ModelSerializer):
         except Products.DoesNotExist:
             raise serializers.ValidationError("Invalid Product")
 
-        try:
-            Cart.objects.get(id=attrs['cart_id'])
-        except Cart.DoesNotExist:
-            raise serializers.ValidationError("Invalid Cart")
 
         return attrs
 
 
 
 class CartSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField()
+    user_id = serializers.IntegerField(read_only=True)
     cart_items = CartItemSerializer(many=True, read_only=True)
     total_amount = serializers.SerializerMethodField()
 
@@ -142,10 +137,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
     order_items = OrderItemSerializer(many=True, read_only=True)
+    total_amount = serializers.SerializerMethodField()
+    order_status = serializers.CharField(max_length=10, default='pending')
 
     class Meta:
         model = Order
-        fields = ['id','user_id','created_at','order_items']
+        fields = ['id','user_id','created_at','total_amount','order_items','order_status']
 
     def validate(self, attrs):
         try:
