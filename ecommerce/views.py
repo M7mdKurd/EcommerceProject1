@@ -90,6 +90,16 @@ class CartViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+    @action(detail=True, methods=['put'], url_path='add-item')
+    def update_quantity(self, request, pk=None):
+        serializers = CartItemSerializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        cart_item = CartItem.objects.get(id=pk)
+        cart_item.quantity = request.data.get('quantity',cart_item.quantity)
+        cart_item.save()
+        return Response(CartItemSerializer(cart_item).data)
+
+
 
 
 

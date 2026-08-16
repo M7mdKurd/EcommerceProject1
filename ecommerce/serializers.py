@@ -82,7 +82,6 @@ class CartItemSerializer(serializers.ModelSerializer):
         return attrs
 
 
-
 class CartSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only=True)
     cart_items = CartItemSerializer(many=True, read_only=True)
