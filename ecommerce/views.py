@@ -1,3 +1,5 @@
+from logging import raiseExceptions
+
 from django.contrib.auth.models import User
 from rest_framework import viewsets, status, mixins
 from rest_framework.authtoken.models import Token
@@ -71,15 +73,19 @@ class CartViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
     @action(detail=False, methods=['post'], url_path='add-item')
     def add_item(self, request):
-        cart, created = Cart.objects.get_or_create(user=request.user)
         serializer = CartItemSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        serializers = CartSerializer(data=request.data)
+        serializers.is_valid(raise_exception=True)
+        cart, created = Cart.objects.get_or_create(user_id=serializers.validated_data['user_id'])
+
+
         item, created = CartItem.objects.get_or_create(
             cart=cart,
             product_id=serializer.validated_data['product_id'],
-            defaults={'quantity': serializer.validated_data.get('quantity', 1)}
+            quantity=serializer.validated_data['quantity'],
         )
-
 
         return Response(CartItemSerializer(item).data, status=status.HTTP_201_CREATED)
 
@@ -98,6 +104,11 @@ class CartViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         cart_item.quantity = request.data.get('quantity',cart_item.quantity)
         cart_item.save()
         return Response(CartItemSerializer(cart_item).data)
+
+    @action(detail=False, methods=['delete'], url_path='clear-cart')
+    def clear_cart(self, request):
+        Cart.objects.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

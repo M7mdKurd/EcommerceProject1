@@ -1,3 +1,4 @@
+import decimal
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -22,9 +23,8 @@ class Products(models.Model):
     def count_order(self):
         return self.orderitem_set.count()
 
-
 class Cart(models.Model):
-    user = models.OneToOneField(User ,on_delete=models.CASCADE, null=True , blank=True)
+    user = models.OneToOneField(User ,on_delete=models.CASCADE, null=False , blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class CartItem(models.Model):
@@ -34,7 +34,7 @@ class CartItem(models.Model):
 
     @property
     def item_total(self):
-        return self.quantity * self.product.price
+        return decimal.Decimal(self.quantity) * self.product.price
 
 
 

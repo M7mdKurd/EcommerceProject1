@@ -57,7 +57,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class CartItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField()
-    quantity = serializers.IntegerField()
+    quantity = serializers.IntegerField(default=1)
     product_name = serializers.CharField(source='product.name', read_only=True)
     price = serializers.DecimalField(source='item_total', max_digits=10, decimal_places=2, read_only=True)
     product_description = serializers.CharField(source='product.description', read_only=True)
@@ -83,7 +83,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only=True)
+    user_id = serializers.IntegerField()
     cart_items = CartItemSerializer(many=True, read_only=True)
     total_amount = serializers.SerializerMethodField()
 
